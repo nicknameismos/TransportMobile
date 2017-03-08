@@ -1,0 +1,30 @@
+<ion-view view-title="เข้าสู่ระบบ">
+  <ion-content class="padding">
+      <!--<div class="list list-inset">
+          <label class="item item-input">
+              <input type="text" placeholder="Username" ng-model="data.username">
+          </label>
+          <label class="item item-input">
+              <input type="password" placeholder="Password" ng-model="data.password">
+          </label>
+      </div>
+      <button class="button button-block button-calm" ng-click="login()">sign up</button>
+       <button class="button button-block button-calm" ng-click="Login(user)">Login</button>-->
+  
+        <form name="login_form" class="" novalidate>
+          <div class="form-fields-outer list list-inset">
+          <label class="item item-input">
+              <input type="text" placeholder="ชื่อผู้ใช้งาน" name="username" ng-model="credentials.username" required>
+            </label>
+            <label class="item item-input" show-hide-container>
+              <input type="password" placeholder="รหัสผ่าน" name="password" ng-model="credentials.password" required show-hide-input>
+            </label>
+          <button type="submit" class="log-in button button-block" ng-click="doLogIn(credentials)" ng-disabled="login_form.$invalid">
+            เข้าสู่ระบบ
+          </button>
+          <p ng-show="error" class="message error">{{error}}</p>
+          </div>
+        </form>
+
+  </ion-content>
+</ion-view>
