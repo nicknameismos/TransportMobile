@@ -5,21 +5,15 @@ navigation history that also transitions its views in and out.
 -->
 <ion-tabs class="tabs-icon-top tabs-color-active-positive">
 
-
   <!-- transport Tab -->
-  <div ng-controller="TransportCtrl" ng-init="init()">
-    <ion-tab title="ขนส่ง" badge="countResponseReq + countResponseRes + countResponseRec" badge-style="badge-assertive" icon-off="ion-model-s" icon-on="ion-model-s"
-      href="#/tab/transport">
-      <ion-nav-view name="tab-transport"></ion-nav-view>
-      </ion-tab>
-  </div>
+  <ion-tab title="ขนส่ง" icon-off="ion-model-s" icon-on="ion-model-s" href="#/tab/transport">
+    <ion-nav-view name="tab-transport"></ion-nav-view>
+  </ion-tab>
 
   <!-- Chats Tab -->
-  <!--<div ng-controller="MapCtrl" ng-init="init()">-->
-    <ion-tab title="แผนที่" icon-off="ion-ios-location-outline" on-select="readMap()" icon-on="ion-ios-location" href="#/tab/map">
-      <ion-nav-view name="tab-map"></ion-nav-view>
-    <!--</ion-tab>-->
-  </div>
+  <ion-tab title="แผนที่" icon-off="ion-ios-location-outline" icon-on="ion-ios-location" href="#/tab/map">
+    <ion-nav-view name="tab-map"></ion-nav-view>
+  </ion-tab>
 
   <!-- Account Tab -->
   <ion-tab title="ตั้งค่า" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/tab/account">
