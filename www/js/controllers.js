@@ -202,11 +202,11 @@ angular.module('starter.controllers', [])
           data.forEach(function (request) {
             if (request.deliverystatus === 'request') {
               $scope.locationRequestorders.push(request);
-            } 
+            }
             else if (request.deliverystatus === 'response') {
-                if (request.transport._id === userStore._id) {
-                  $scope.locationResponseRes.push(request);
-                }
+              if (request.transport._id === userStore._id) {
+                $scope.locationResponseRes.push(request);
+              }
             }
           });
           var posOptions = { timeout: 10000, enableHighAccuracy: false };
@@ -249,7 +249,7 @@ angular.module('starter.controllers', [])
                 draggable: true,
                 map: map
               });
-             
+
               $scope.locationRequestorders.forEach(function (locations) {
                 var product = '';
                 var price = null;
@@ -346,12 +346,124 @@ angular.module('starter.controllers', [])
     $scope.chat = Chats.get($stateParams.chatId);
   })
 
-  .controller('AccountCtrl', function ($scope, AuthService, $state) {
+  .controller('AccountCtrl', function ($scope, $http, $state, AuthService, ReturnService, $ionicModal, $rootScope) {
     $scope.settings = {
       enableFriends: true
     };
     $scope.doLogOut = function () {
       AuthService.signOut();
       $state.go('login');
+    };
+    $scope.listreturn = function () {
+      $state.go('tab.listreturn');
+    }
+  })
+
+  .controller('ReturnCtrl', function ($scope, $http, $state, AuthService, ReturnService, $ionicModal, $rootScope) {
+
+    $scope.init = function () {
+      $scope.loadDataRe();
+    }
+
+    $scope.loadDataRe = function () {
+      ReturnService.getReturnorder()
+        .then(function (data) {
+          var userStore = AuthService.getUser();
+          $rootScope.ReResponse = data;
+          $rootScope.countReResponse = 0;
+          if ($rootScope.countReResponseRet) {
+            $rootScope.countReResponseRet = $rootScope.countReResponseRet;
+          }
+          if ($rootScope.countReResponseRes) {
+            $rootScope.countReResponseRes = $rootScope.countReResponseRes;
+          }
+          if ($rootScope.countReResponseRec) {
+            $rootScope.countReResponseRec = $rootScope.countReResponseRec;
+          }
+          $scope.return = true;
+          $scope.response = false;
+          $scope.received = false;
+
+          $scope.returnordersReturn = [];
+          $scope.returnordersResponse = [];
+          $scope.returnordersReceived = [];
+          $rootScope.countReResponseRet = 0;
+          $rootScope.countReResponseRes = 0;
+          $rootScope.countReResponseRec = 0;
+          angular.forEach($rootScope.ReResponse, function (returnOr) {
+            if (returnOr.deliverystatus === 'return') {
+              $scope.returnordersReturn.push(returnOr);
+            } else if (returnOr.transport) {
+              if (returnOr.transport._id === userStore._id) {
+                if (returnOr.deliverystatus === 'response') {
+                  $scope.returnordersResponse.push(returnOr);
+                } else if (returnOr.deliverystatus === 'received') {
+                  $scope.returnordersReceived.push(returnOr);
+                }
+              }
+            }
+
+          })
+          $rootScope.countReResponseRet = $scope.returnordersReturn.length;
+          $rootScope.countReResponseRes = $scope.returnordersResponse.length;
+          $rootScope.countReResponseRec = $scope.returnordersReceived.length;
+          $rootScope.ReResponseRet = $scope.returnordersReturn;
+          $rootScope.ReResponseRes = $scope.returnordersResponse;
+          $rootScope.ReResponseRec = $scope.returnordersReceived;
+        });
+    }
+
+
+    $scope.returnorderDetail = function (data) {
+      //alert('go to detail');
+
+      $state.go('tab.returndetail', { data: JSON.stringify(data) });
+    }
+
+    $scope.doRefresh = function () {
+      $scope.init();
+      // Stop the ion-refresher from spinning
+      $scope.$broadcast('scroll.refreshComplete');
+
+    };
+
+    $scope.$on('onNotification', function (event, args) {
+      // do what you want to do
+      $scope.init();
+    });
+  })
+
+  .controller('ReturnDetailCtrl', function ($scope, ReturnService, AuthService, $state, $stateParams, $ionicModal) {
+    $scope.userStore = AuthService.getUser();
+    $scope.data = JSON.parse($stateParams.data);
+    console.log($scope.data);
+
+    $scope.returnOrder = function (item) {
+      var listord =
+        {
+          status: 'response',
+          datestatus: new Date()
+        };
+      item.historystatus.push(listord);
+
+      var status = item.deliverystatus;
+      status = 'response';
+      var returnorder = {
+        deliverystatus: status,
+        historystatus: item.historystatus,
+        transport: $scope.userStore
+      }
+      var returnorderId = item._id;
+
+
+      ReturnService.updateReturnOrder(returnorderId, returnorder)
+        .then(function (response) {
+          // alert('success');
+          $state.go('tab.listreturn');
+        }, function (error) {
+          console.log(error);
+          alert('dont success' + " " + error.data.message);
+        });
+
     };
   });

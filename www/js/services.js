@@ -107,4 +107,37 @@ angular.module('starter.services', [])
       });
       return dfd.promise;
     };
+  }])
+  
+  .service('ReturnService', ['$http', '$q', function ($http, $q) {
+    var apiURL = 'https://thamapptest.herokuapp.com/api';
+    this.getReturnorder = function () {
+      var dfd = $q.defer();
+      $http.get(apiURL + '/returnorders').success(function (returnorders) {
+        dfd.resolve(returnorders);
+      });
+      return dfd.promise;
+
+    };
+
+    this.updateReturnOrder = function (returnorderId, returnorder) {
+      var dfd = $q.defer();
+      $http.put(apiURL + '/returnorders/' + returnorderId, returnorder).success(function (returnorders) {
+        // if (window.localStorage.token && window.localStorage.user) {
+        //   var userStore = JSON.parse(window.localStorage.user);
+        //   var push_usr = {
+        //     user_id: userStore._id,
+        //     user_name: userStore.username,
+        //     role: 'transporter',
+        //     device_token: window.localStorage.token
+        //   };
+        //   AuthService.saveUserPushNoti(push_usr)
+        //     .then(function (res) {
+        //       console.log('success');
+        //     });
+        // }
+        dfd.resolve(returnorders);
+      });
+      return dfd.promise;
+    };
   }]);

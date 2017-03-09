@@ -5,3 +5,5 @@ add platform
 
 cordova plugin add cordova-plugin-geolocation
 cordova plugin add cordova-plugin-splashscreen
+
+bower install angular-moment --save

@@ -1,0 +1,60 @@
+<ion-view view-title="รายการใบแจ้งคืน" ng-init="init()">
+    <ion-content>
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()">
+        </ion-refresher>
+        <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search" aria-hidden="true"></i></span>
+            <input type="text" class="form-control" placeholder="ค้นหา..." ng-model="topsearch" aria-describedby="sizing-addon3">
+        </div>
+        <div class="row">
+            <div class="col"></div>
+            <div class="col col-90">
+                <div class="button-bar">
+                    <a class="button button-outline button-positive {{return === true ? 'active' : ''}}" ng-click="return = true ;response = false;received = false ;">แจ้งคืน</a>
+                    <a class="button button-outline button-positive {{response === true ? 'active' : ''}}" ng-click="response = true;received = false ;return=false;">ตอบกลับ</a>
+                    <a class="button button-outline button-positive {{received === true ? 'active' : ''}}" ng-click="received = true; response= false ;return=false;">ได้รับ</a>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <div ng-show="return" ng-repeat="data in ReResponseRet | filter:topsearch">
+            <ion-item class='item item-avatar-left item-icon-right' ng-click="returnorderDetail(data)">
+                <img src={{data.namedeliver.profileImageURL}} <h2>{{data.namedeliver.displayName}}</h2>
+                <p class="product10">{{data.shipping.address}} {{data.shipping.subdistrict}}</p>
+                <p class="product10">{{data.shipping.district}} {{data.shipping.province}} {{data.shipping.postcode}}</p>
+                <p class="product10">{{data.shipping.tel}} </p>
+                <p class="icon ion-right clock  ion-clock" am-time-ago="data.created"></p>
+                <p class="icon ion-right amount">{{data.totalamount}} ฿</p>
+            </ion-item>
+        </div>
+
+        <div ng-show="response" ng-repeat="data in ReResponseRes | filter:topsearch">
+            <ion-item class='item item-avatar-left item-icon-right' ng-click="returnorderDetail(data)">
+                <img src={{data.namedeliver.profileImageURL}}>
+                <h2>{{data.namedeliver.displayName}}</h2>
+                <p class="product10">{{data.shipping.address}} {{data.shipping.subdistrict}}</p>
+                <p class="product10">{{data.shipping.district}} {{data.shipping.province}} {{data.shipping.postcode}}</p>
+                <p class="product10">{{data.shipping.tel}} </p>
+                <p class="icon ion-right clock2  ion-clock" am-time-ago="data.created"></p>
+                <p class="icon ion-right amount ">{{data.totalamount}} ฿</p>
+                <p>บริษัท : {{data.transport.displayName}}</p>
+
+            </ion-item>
+        </div>
+
+        <div ng-show="received" ng-repeat="data in ReResponseRec | filter:topsearch">
+            <ion-item class='item item-avatar-left item-icon-right' ng-click="returnorderDetail(data)">
+                <img src={{data.namedeliver.profileImageURL}}>
+                <h2>{{data.namedeliver.displayName}}</h2>
+                <p class="product10">{{data.shipping.address}} {{data.shipping.subdistrict}}</p>
+                <p class="product10">{{data.shipping.district}} {{data.shipping.province}} {{data.shipping.postcode}}</p>
+                <p class="product10">{{data.shipping.tel}} </p>
+                <p class="icon ion-right clock2  ion-clock" am-time-ago="data.created"></p>
+                <p class="icon ion-right amount">{{data.totalamount}} ฿</p>
+                <p>บริษัท : {{data.transport.displayName}}</p>
+
+            </ion-item>
+        </div>
+    </ion-content>>
+</ion-view>
