@@ -1,24 +1,24 @@
 angular.module('starter.controllers', [])
 
   .controller('LogInCtrl', function ($scope, $state, AuthService, $rootScope) {
+    var push = new Ionic.Push({
+      "debug": true,
+      "onNotification": function (notification) {
+        console.log(notification);
+        $rootScope.$broadcast('onNotification');
+        if (notification._raw.additionalData.foreground) {
+          //   //alert(notification.message);
+          $rootScope.$broadcast('onNotification');
+        }
+      }
+    });
 
-    // var push = new Ionic.Push({
-    //   "debug": true,
-    //   "onNotification": function (notification) {
-    //     //console.log(notification);
-    //     if (notification._raw.additionalData.foreground) {
-    //       //alert(notification.message);
-
-    //       $rootScope.$broadcast('onNotification');
-    //     }
-    //   }
-    // });
-
-    // push.register(function (token) {
-    //   console.log("My Device token:", token.token);
-    //   window.localStorage.token = JSON.stringify(token.token);
-    //   push.saveToken(token);  // persist the token in the Ionic Platform
-    // });
+    push.register(function (token) {
+      console.log("My Device token:", token.token);
+      // prompt('copy token', token.token);
+      window.localStorage.token = JSON.stringify(token.token);
+      push.saveToken(token);  // persist the token in the Ionic Platform
+    });
 
     $scope.userStore = AuthService.getUser();
     if ($scope.userStore) {
@@ -61,6 +61,7 @@ angular.module('starter.controllers', [])
                 .then(function (res) {
                   $scope.credentials = {}
                   $state.go('tab.transport');
+                  $rootScope.$broadcast('onLoginSuccess');
                 });
               // alert('success');
             } else {
@@ -73,12 +74,19 @@ angular.module('starter.controllers', [])
     };
   })
 
-  .controller('TransportCtrl', function ($scope, $http, $state, AuthService, RequestService, $ionicModal, $rootScope) {
+  .controller('TransportCtrl', function ($scope, $http, $state, AuthService, RequestService, $ionicModal, $rootScope, $stateParams) {
 
     $scope.init = function () {
       $scope.loadData();
     }
-
+    $scope.$on('onNotification', function (event, args) {
+      // do what you want to do
+      $scope.init();
+    });
+    $rootScope.$on("$stateChangeSuccess", function (event, toState, toParams, fromState, fromParams) {
+      // alert('ok');
+      $scope.init();
+    });
     $scope.loadData = function () {
       RequestService.getResponseorder()
         .then(function (data) {
@@ -140,11 +148,6 @@ angular.module('starter.controllers', [])
       $scope.$broadcast('scroll.refreshComplete');
 
     };
-
-    $scope.$on('onNotification', function (event, args) {
-      // do what you want to do
-      $scope.init();
-    });
   })
 
   .controller('TransportDetailCtrl', function ($scope, RequestService, AuthService, $state, $stateParams, $ionicModal) {
@@ -182,13 +185,15 @@ angular.module('starter.controllers', [])
     };
   })
 
-  .controller('MapCtrl', function ($scope, $http, $state, AuthService, RequestService, $stateParams, $cordovaGeolocation) {
+  .controller('MapCtrl', function ($scope, $rootScope, $http, $state, AuthService, RequestService, $stateParams, $cordovaGeolocation) {
     $scope.init = function () {
       $scope.readMap();
     }
     $scope.$on('onLoginSuccess', function (event, args) {
-      // do what you want to do
-      //alert();
+      $scope.init();
+    });
+    $rootScope.$on("$stateChangeSuccess", function (event, toState, toParams, fromState, fromParams) {
+      // alert('ok');
       $scope.init();
     });
 
@@ -364,7 +369,15 @@ angular.module('starter.controllers', [])
     $scope.init = function () {
       $scope.loadDataRe();
     }
-
+    $scope.$on('onNotification', function (event, args) {
+      // do what you want to do
+      //alert();
+      $scope.init();
+    });
+    $rootScope.$on("$stateChangeSuccess", function (event, toState, toParams, fromState, fromParams) {
+      // alert('ok');
+      $scope.init();
+    });
     $scope.loadDataRe = function () {
       ReturnService.getReturnorder()
         .then(function (data) {
@@ -426,11 +439,6 @@ angular.module('starter.controllers', [])
       $scope.$broadcast('scroll.refreshComplete');
 
     };
-
-    $scope.$on('onNotification', function (event, args) {
-      // do what you want to do
-      $scope.init();
-    });
   })
 
   .controller('ReturnDetailCtrl', function ($scope, ReturnService, AuthService, $state, $stateParams, $ionicModal) {

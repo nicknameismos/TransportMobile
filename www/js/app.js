@@ -25,13 +25,38 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
       });
 
       push.register(function (token) {
-        console.log("My Device token:", token.token);
-        prompt('copy token', token.token);
+        // console.log("My Device token:", token.token);
+        // prompt('copy token', token.token);
         window.localStorage.token = token.token;
         push.saveToken(token);  // persist the token in the Ionic Platform
       });
 
     });
+  })
+
+    .config(function ($httpProvider) {
+    $httpProvider.interceptors.push(function ($rootScope) {
+      return {
+        request: function (config) {
+          $rootScope.$broadcast('loading:show')
+          return config
+        },
+        response: function (response) {
+          $rootScope.$broadcast('loading:hide')
+          return response
+        }
+      }
+    })
+  })
+
+  .run(function ($rootScope, $ionicLoading) {
+    $rootScope.$on('loading:show', function () {
+      $ionicLoading.show({ template: 'กรุณารอสักครู่' })
+    })
+
+    $rootScope.$on('loading:hide', function () {
+      $ionicLoading.hide()
+    })
   })
 
   .config(function ($stateProvider, $urlRouterProvider) {
